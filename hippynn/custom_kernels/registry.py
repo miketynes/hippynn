@@ -1,3 +1,5 @@
+import warnings
+
 from hippynn.custom_kernels.autograd_wrapper import wrap_envops
 
 
@@ -36,6 +38,20 @@ class MessagePassingKernels:
             raise ValueError(f"Already have implementation of kernels named {impl_name}!")
         else:
             self._registered_implementations[impl_name] = self
+
+    @classmethod
+    def safe_init(self, impl_name, *args, **kwargs):
+        """Init self, but return None if init fails and raise a warning"""
+        try:
+            out = self.__init__(impl_name, *args, **kwargs)
+        except Exception as e:
+            w = RuntimeWarning(*e.args)
+            w.with_traceback(e.__traceback__)
+            warnings.warn(w)
+            out = None
+
+        self._registered_implementations[impl_name] = out
+        return out
 
     @classmethod
     def get_implementation(cls, impl_name):
