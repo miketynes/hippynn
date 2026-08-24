@@ -23,13 +23,13 @@ def get_subgraph(required_nodes: Collection[Node])->List[Node]:
 
     required_nodes = list(set(required_nodes))
     subgraph_nodes = required_nodes + [p for node in required_nodes for p in node.get_ancestors()]
-
     subgraph_nodes = subgraph_nodes + [c for mn in subgraph_nodes if isinstance(mn, MultiNode) for c in mn.children]
     # ^-- a note on this:
     # Children are included because bad things happen if a multinode is left without any of its children;
     # The API using dot syntax will break.
     # Adding these to a GraphModule is not expensive - it adds a bit of unwrapping time.
 
+    # return list(set(subgraph_nodes))
     return list(set(subgraph_nodes))
 
 
